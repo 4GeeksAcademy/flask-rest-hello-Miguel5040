@@ -85,7 +85,7 @@ def handle_user():
     
     if request.method == "GET":
         users = User.query.all()
-        user_list = [{"id": user.id, "email": user.email} for user in users]
+        user_list = [User.serialize(user) for user in users]
         return jsonify({'users': user_list})
 
 
@@ -123,10 +123,9 @@ def display_character_info(id):
             "message": "No existe un personaje con esa id"
         }), 404
     
-    character_properties = [{"name": character.name, "birth_year": character.birth_year, "gender": character.gender, "height": character.height, "skin_color": character.skin_color, "eye_color": character.eye_color}]
     return jsonify({
         "message": "ok",
-        "Properties": character_properties
+        "Properties": character.serialize()
     })
 
 
@@ -139,10 +138,10 @@ def display_planet_info(id):
         return jsonify({
             "message": "No existe un planeta con esa id"
         }), 404
-    planet_properties = [{"name": planet.name, "diameter": planet.diameter, "gravity": planet.gravity, "population": planet.population, "climate": planet.climate, "terrain": planet.terrain}]
+    
     return jsonify({
         "message": "ok",
-        "properties": planet_properties
+        "properties": planet.serialize()
     })
 
 
@@ -156,16 +155,16 @@ def display_vehicle_info(id):
             "message": "No existe un vehiculo con esa id"
         }), 404
     
-    vehicle_properties = [{"name": vehicle.name, "model": vehicle.model, "vehicle_class": vehicle.vehicle_class, "passengers": vehicle.passengers, "manufacturer": vehicle.manufacturer, "length": vehicle.length}]
     return jsonify({
         "message": "ok",
-        "properties": vehicle_properties
+        "properties": vehicle.serialize()
     })
 
 
 # Solicitar lista de favoritos con el id del usuario
 @app.route("/user/<int:user_id>/favorites", methods=["GET"])
 def display_favorites(user_id):
+    
     user = User.query.get(user_id)
 
     if user is None:
